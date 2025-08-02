@@ -2,7 +2,7 @@ title: AI Research Blog
 description: Exploring the latest developments in artificial intelligence and machine learning
 author: AI Researcher
 email: your-email@example.com
-url: "https://yourusername.github.io/your-repo-name"
+url: "https://ncvgl.github.io/ai-research-blog"
 baseurl: ""
 
 # Build settings
@@ -45,7 +45,7 @@ exclude:
 
 # Social media
 social:
-  github: yourusername
+  github: ncvgl
   twitter: yourusername
   linkedin: yourusername
 
