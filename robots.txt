@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ncvgl.github.io/ai-research-blog/sitemap.xml
+Sitemap: https://ncvgl.github.io/myblog/sitemap.xml

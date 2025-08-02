@@ -1,8 +1,8 @@
-title: AI Research Blog
+title: My Blog
 description: Exploring the latest developments in artificial intelligence and machine learning
-author: AI Researcher
-email: your-email@example.com
-url: "https://ncvgl.github.io/ai-research-blog"
+author: Nathan Cavaglione
+email: nathan.cavaglione@gmail.com
+url: "https://ncvgl.github.io/myblog"
 baseurl: ""
 
 # Build settings
@@ -23,7 +23,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "AI Researcher"
+      author: "Nathan Cavaglione"
       comments: true
       share: true
 
