@@ -1,0 +1,53 @@
+title: My Blog
+description: Exploring the latest developments in artificial intelligence and machine learning
+author: Nathan Cavaglione
+email: nathan.cavaglione@gmail.com
+url: "https://ncvgl.github.io/myblog"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:collection/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Nathan Cavaglione"
+      comments: true
+      share: true
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Social media
+social:
+  github: ncvgl
+  twitter: yourusername
+  linkedin: yourusername
+
+# Analytics (optional)
+google_analytics: # UA-XXXXXXXX-X

@@ -1,0 +1,61 @@
+---
+layout: default
+---
+
+<article class="post">
+    <header class="post-header">
+        <div class="container">
+            <div class="post-meta">
+                <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">
+                    {{ page.date | date: "%B %d, %Y" }}
+                </time>
+                {% if page.author %}
+                <span class="post-author">by {{ page.author }}</span>
+                {% endif %}
+            </div>
+            <h1 class="post-title">{{ page.title }}</h1>
+            {% if page.description %}
+            <p class="post-excerpt">{{ page.description }}</p>
+            {% endif %}
+            {% if page.tags %}
+            <div class="post-tags">
+                {% for tag in page.tags %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="post-content">
+        <div class="container">
+            <div class="content-wrapper">
+                {{ content }}
+            </div>
+            
+            <div class="post-footer">
+                <div class="post-navigation">
+                    {% if page.previous.url %}
+                    <a href="{{ page.previous.url }}" class="nav-prev">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>{{ page.previous.title }}</span>
+                    </a>
+                    {% endif %}
+                    {% if page.next.url %}
+                    <a href="{{ page.next.url }}" class="nav-next">
+                        <span>{{ page.next.title }}</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                
+                {% if page.comments %}
+                <div class="comments-section">
+                    <h3>Comments</h3>
+                    <p>Comments are disabled for now. Feel free to reach out on social media!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</article>
