@@ -44,8 +44,10 @@ name {
 
 /* Profile photo styling */
 img[alt="profile photo"] {
-  border-radius: 50%;
+  border-radius: 50% !important;
   object-fit: cover;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Article page */
