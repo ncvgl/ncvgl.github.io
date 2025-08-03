@@ -1,10 +1,9 @@
 ---
-layout: post
+layout: simple-post
 title: "Getting Started with Gemini CLI: A Complete Guide"
 date: 2024-12-19
-author: AI Researcher
+author: Nathan Cavaglione
 description: "Learn how to harness the power of Google's Gemini AI through the command line interface. From installation to advanced usage patterns, this comprehensive guide covers everything you need to know."
-tags: [AI Tools, Gemini, CLI, Google AI, Tutorial]
 ---
 
 # Getting Started with Gemini CLI: A Complete Guide
