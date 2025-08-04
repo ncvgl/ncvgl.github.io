@@ -1,12 +1,13 @@
 ---
 layout: simple-post
 title: "Getting Started with Gemini CLI: A Complete Guide"
-date: 2024-12-19
+date: 2025-08-03
 author: Nathan Cavaglione
 description: "Learn how to harness the power of Google's Gemini AI through the command line interface. From installation to advanced usage patterns, this comprehensive guide covers everything you need to know."
+image: "/assets/images/gemini-cli-img.png"
 ---
 
-# Getting Started with Gemini CLI: A Complete Guide
+<img src="/assets/images/gemini-cli-img.png" alt="Gemini CLI" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 20px 0;">
 
 Google's Gemini AI has revolutionized how we interact with artificial intelligence, and now with the Gemini CLI tool, you can harness its power directly from your terminal. This comprehensive guide will walk you through everything you need to know to get started with Gemini CLI.
 
