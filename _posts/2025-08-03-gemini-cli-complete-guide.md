@@ -1,456 +1,96 @@
 ---
 layout: simple-post
-title: "Getting Started with Gemini CLI: A Complete Guide"
+title: "Gemini CLI Reverse Engineering"
 date: 2025-08-03
 author: Nathan Cavaglione
-description: "Learn how to harness the power of Google's Gemini AI through the command line interface. From installation to advanced usage patterns, this comprehensive guide covers everything you need to know."
+description: "Learn how the Gemini CLI engine was coded under the hood"
 image: "/assets/images/gemini-cli-img.png"
 ---
 
 <img src="/assets/images/gemini-cli-img.png" alt="Gemini CLI" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 20px 0;">
 
-Google's Gemini AI has revolutionized how we interact with artificial intelligence, and now with the Gemini CLI tool, you can harness its power directly from your terminal. This comprehensive guide will walk you through everything you need to know to get started with Gemini CLI.
+_Disclaimer: I created this article from the open-source [code](https://github.com/google-gemini/gemini-cli) on GitHub. Although I work at Google, I am not part of the Gemini CLI team and have not been in touch with them._
 
-## What is Gemini CLI?
+I was curious how gemini-cli was written, after all it worked quite well and was as close to Cursor as Google had gotten. 
+With its awkward vim feeling, it was the first step of Gemini in the agent paradigm, where the LLM is augmented to interact with your computer through the command line.
 
-Gemini CLI is a command-line interface that allows you to interact with Google's Gemini AI models directly from your terminal. It provides a powerful way to:
+On the product side, I think many like me were too lazy to leave IntelliJ for a VSCode-like editor like Cursor so they were mainly surfing the AI wave through IntelliJ plugins (eg: Gemini Code Assist), copy-pasting to online LLMs chat interace or had built their own custom solutions. gemini-cli came as a step up in the AI coding experience for those people. 
 
-- Generate code and text
-- Ask questions and get detailed answers
-- Analyze files and documents
-- Create content for various purposes
-- Integrate AI capabilities into your development workflow
+I need to say though, comparing Cursor to gemini-cli is where I understood the importance of the 'product' side in AI. Both engines have the same level of performance and intelligence, but Cursor has already solved all the little things that can be annoying when coding with AI: applying changes, switching LLMs, tracking context length, scanning a directory… All those little frictions that show the limitations of human-agents interactions have been solved already with opinionated takes on features, which makes the experience so much smoother. That's the value in paying for Cursor.
 
-## Prerequisites
+But onto gemini-cli, which is a very open-ended agent, allows you to build anything, but sometimes goes down the rabbit hole.
+Is it something you could have built yourself easily ? Let's dig into it. 
 
-Before we begin, make sure you have:
+# The Prompts
 
-- A Google account
-- Python 3.8 or higher installed
-- pip (Python package manager)
-- A Google AI API key
+There are only 2 and both located at `packages/core/src/core/prompts.ts`
 
-## Installation
+We start by them because this 'natural language' (NL) code is more important than programming code itself, which machines have widely automated, while NL code speaks more directly of the intent and design decisions of the programmers.
 
-### Step 1: Install the Gemini CLI
+## The Core System Prompt 
 
-The easiest way to install Gemini CLI is through pip:
+This one is 20 page long - yes hard to believe - and defines the agent's behavior 360 degrees. 
+I compiled some of the most clear cut instructions below: 
 
-```bash
-pip install google-generativeai
-```
+* **Core Mandates**: Guidelines for code conventions, libraries/frameworks usage, style & structure, comments, proactiveness.
 
-Alternatively, you can install it using the official Google CLI tools:
+`Mimic the style (formatting, naming), structure, framework choices, typing, and architectural patterns of existing code`
 
-```bash
-# Install Google Cloud CLI (if not already installed)
-curl https://sdk.cloud.google.com | bash
-exec -l $SHELL
+`NEVER assume a library/framework is available or appropriate`
 
-# Install Gemini CLI
-gcloud components install gemini
-```
+`*NEVER* talk to the user or describe your changes through comments`
 
-### Step 2: Set Up Authentication
+* **Primary Workflows**: Detailed instructions for software engineering tasks and new application development.
 
-You'll need to authenticate with Google and set up your API key:
+`Use 'grep' and 'glob' search tools extensively to understand file structures, existing code patterns, and conventions`
 
-```bash
-# Authenticate with Google
-gcloud auth login
+* **Operational Guidelines**: Tone and style for CLI interaction, security rules, tool usage guidelines
 
-# Set your API key (you'll need to get this from Google AI Studio)
-export GOOGLE_API_KEY="your-api-key-here"
-```
+`Always apply security best practices. Never introduce code that exposes, logs, or commits secrets, API keys, or other sensitive information`
 
-To get your API key:
+`Use the 'memory' tool to remember specific, *user-related* facts or preferences when the user explicitly asks`
 
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Create a new API key
-4. Copy the key and set it as an environment variable
+`Execute multiple independent tool calls in parallel when feasible`
 
-## Basic Usage
+It is funny to see many of the inner logic we would have hardcoded in a traditional software is here exposed to the agent as concepts it should use, but can also decide not to.
 
-### Simple Text Generation
+* **Environment-specific instructions**: Different prompts for sandbox vs non-sandbox environments. Here a different prompt is appended depending on the user environment. Any user-related memory is added.
 
-Let's start with the basics. Here's how to generate text using Gemini CLI:
+* **Git repository handling**: Special instructions when working in git repositories
 
-```bash
-# Basic text generation
-gemini "Write a Python function to calculate fibonacci numbers"
-```
+`When asked to commit changes or prepare a commit, always start by gathering information using shell commands`
 
-### Interactive Mode
+`Prefer commit messages that are clear, concise, and focused more on 'why' and less on 'what'`
 
-For more complex interactions, you can use interactive mode:
+Surprisingly, there were many instructions that seemed too vague to be useful for the LLM and cluttered the context like:
+`Think about the user's request and the relevant codebase context`
 
-```bash
-# Start interactive session
-gemini --interactive
-```
+There were also some few-shot examples provided like:
+`user: list files here. → [tool_call: ls for path '/path/to/project']`
 
-In interactive mode, you can have a conversation with Gemini:
+## The Compression Prompt
+
+Managing context is key to effective agents and so a strategy is employed here to keep it short.
+
+The prompts asks for summarizing conversation history into structured XML format with sections like:
+
+* `<overall_goal>`
+* `<key_knowledge>`
+* `<file_system_state>`
+* `<recent_actions>`
+* `<current_plan>`
+
+Here is an extract that is quite self-explanatory: 
 
 ```
-You: Explain quantum computing in simple terms
-Gemini: Quantum computing is like having a computer that can be in multiple states at once...
+When the conversation history grows too large, you will be invoked to distill the entire history into a concise, structured XML snapshot. 
+This snapshot is CRITICAL, as it will become the agent's *only* memory of the past. 
 
-You: How does this differ from classical computing?
-Gemini: Classical computers use bits that are either 0 or 1...
+First, you will think through the entire history in a private <scratchpad>. 
+Review the user's overall goal, the agent's actions, tool outputs, file modifications, and any unresolved questions. 
+Identify every piece of information that is essential for future actions.
+
+After your reasoning is complete, generate the final <state_snapshot> XML object. 
+Be incredibly dense with information. Omit any irrelevant conversational filler.
 ```
 
-### File Analysis
-
-One of the most powerful features is the ability to analyze files:
-
-```bash
-# Analyze a Python file
-gemini --file script.py "Explain what this code does and suggest improvements"
-
-# Analyze multiple files
-gemini --file file1.py --file file2.py "Compare these two implementations"
-```
-
-## Advanced Features
-
-### Code Generation and Analysis
-
-Gemini CLI excels at code-related tasks:
-
-```bash
-# Generate a complete Python script
-gemini "Create a Python script that scrapes weather data from a website"
-
-# Debug existing code
-gemini --file buggy_script.py "Find and fix the bugs in this code"
-
-# Optimize performance
-gemini --file slow_script.py "Optimize this code for better performance"
-```
-
-### Content Creation
-
-Generate various types of content:
-
-```bash
-# Write documentation
-gemini "Write technical documentation for a REST API"
-
-# Create blog posts
-gemini "Write a blog post about machine learning trends in 2024"
-
-# Generate marketing copy
-gemini "Create marketing copy for a new AI product"
-```
-
-### Data Analysis
-
-Analyze and interpret data:
-
-```bash
-# Analyze CSV data
-gemini --file data.csv "Analyze this dataset and provide insights"
-
-# Create visualizations
-gemini --file data.csv "Suggest the best charts to visualize this data"
-```
-
-## Configuration and Customization
-
-### Setting Default Parameters
-
-You can configure default settings for your Gemini CLI usage:
-
-```bash
-# Set default model
-gemini config set model gemini-pro
-
-# Set default temperature (creativity level)
-gemini config set temperature 0.7
-
-# Set default max tokens
-gemini config set max_tokens 2048
-```
-
-### Creating Aliases
-
-Make your workflow more efficient with aliases:
-
-```bash
-# Add to your .bashrc or .zshrc
-alias codegen='gemini --model gemini-pro "Generate code for: "'
-alias debug='gemini --file "Debug this code: "'
-alias explain='gemini "Explain in simple terms: "'
-```
-
-## Integration with Development Workflows
-
-### Git Integration
-
-Integrate Gemini CLI with your Git workflow:
-
-```bash
-# Generate commit messages
-git diff --cached | gemini "Generate a concise commit message for these changes"
-
-# Review pull requests
-git diff main | gemini "Review this code and suggest improvements"
-```
-
-### IDE Integration
-
-You can integrate Gemini CLI with your favorite IDE:
-
-**VS Code Integration:**
-```json
-// settings.json
-{
-    "terminal.integrated.env.linux": {
-        "GOOGLE_API_KEY": "your-api-key"
-    }
-}
-```
-
-**Custom VS Code Tasks:**
-```json
-// tasks.json
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Ask Gemini",
-            "type": "shell",
-            "command": "gemini",
-            "args": ["${input:question}"],
-            "group": "build"
-        }
-    ],
-    "inputs": [
-        {
-            "id": "question",
-            "description": "Your question for Gemini",
-            "default": "",
-            "type": "promptString"
-        }
-    ]
-}
-```
-
-## Best Practices
-
-### 1. Be Specific with Prompts
-
-Instead of:
-```bash
-gemini "Help me with Python"
-```
-
-Use:
-```bash
-gemini "I'm building a web scraper in Python using BeautifulSoup. How do I handle rate limiting and avoid being blocked?"
-```
-
-### 2. Use Context Effectively
-
-Provide relevant context for better results:
-
-```bash
-gemini --file config.py --file main.py "Given these configuration files, explain how the application handles authentication"
-```
-
-### 3. Iterate and Refine
-
-Don't expect perfect results on the first try:
-
-```bash
-# First attempt
-gemini "Create a Python class for user management"
-
-# Refine based on output
-gemini "The previous class needs to include password hashing and email validation. Here's what you generated: [paste output]"
-```
-
-### 4. Manage API Usage
-
-Monitor your API usage to avoid unexpected costs:
-
-```bash
-# Check your current usage
-gemini usage
-
-# Set usage limits
-gemini config set max_daily_requests 1000
-```
-
-## Troubleshooting Common Issues
-
-### Authentication Problems
-
-If you're having authentication issues:
-
-```bash
-# Re-authenticate
-gcloud auth login
-
-# Check your API key
-echo $GOOGLE_API_KEY
-
-# Test the connection
-gemini "Hello" --verbose
-```
-
-### Rate Limiting
-
-If you hit rate limits:
-
-```bash
-# Check your current usage
-gemini usage
-
-# Wait and retry, or use a different model
-gemini --model gemini-pro-vision "Your question here"
-```
-
-### Installation Issues
-
-If installation fails:
-
-```bash
-# Update pip
-pip install --upgrade pip
-
-# Install with specific version
-pip install google-generativeai==0.3.0
-
-# Check Python version
-python --version
-```
-
-## Real-World Examples
-
-### Example 1: Code Review Assistant
-
-```bash
-# Review a pull request
-git diff origin/main | gemini "Review this code for:
-1. Security vulnerabilities
-2. Performance issues
-3. Best practices violations
-4. Potential bugs"
-```
-
-### Example 2: Documentation Generator
-
-```bash
-# Generate API documentation
-gemini --file api.py "Generate comprehensive API documentation including:
-- Endpoint descriptions
-- Request/response examples
-- Error codes
-- Authentication requirements"
-```
-
-### Example 3: Data Analysis Helper
-
-```bash
-# Analyze sales data
-gemini --file sales_data.csv "Analyze this sales data and provide:
-1. Key trends and patterns
-2. Recommendations for improvement
-3. Potential issues to investigate
-4. Visualizations to create"
-```
-
-## Advanced Tips and Tricks
-
-### 1. Chain Commands
-
-Combine multiple Gemini calls for complex tasks:
-
-```bash
-# Generate code, then optimize it
-gemini "Create a Python web scraper" > scraper.py
-gemini --file scraper.py "Optimize this code for performance and add error handling" > optimized_scraper.py
-```
-
-### 2. Use Templates
-
-Create reusable templates for common tasks:
-
-```bash
-# Template for code review
-echo "Review this code for:
-- Security issues
-- Performance problems
-- Best practices
-- Readability" > review_template.txt
-
-gemini --file code.py --file review_template.txt
-```
-
-### 3. Batch Processing
-
-Process multiple files at once:
-
-```bash
-# Review all Python files in a directory
-for file in *.py; do
-    echo "=== Reviewing $file ==="
-    gemini --file "$file" "Review this code"
-    echo ""
-done
-```
-
-## Security Considerations
-
-### API Key Management
-
-Always protect your API key:
-
-```bash
-# Use environment variables
-export GOOGLE_API_KEY="your-key"
-
-# Or use a secure credential manager
-echo "export GOOGLE_API_KEY='your-key'" >> ~/.bashrc
-source ~/.bashrc
-```
-
-### Input Validation
-
-Be careful with user input:
-
-```bash
-# Sanitize inputs before sending to Gemini
-read -p "Enter your question: " question
-sanitized_question=$(echo "$question" | sed 's/[^a-zA-Z0-9 ]//g')
-gemini "$sanitized_question"
-```
-
-## Conclusion
-
-Gemini CLI is a powerful tool that can significantly enhance your development workflow. By following this guide, you should now be able to:
-
-- Install and configure Gemini CLI
-- Use basic and advanced features
-- Integrate it into your development workflow
-- Follow best practices for optimal results
-- Troubleshoot common issues
-
-Remember that AI tools like Gemini CLI are meant to augment your capabilities, not replace your expertise. Use them as assistants to help you work more efficiently and creatively.
-
-## Next Steps
-
-To continue your journey with Gemini CLI:
-
-1. **Explore the official documentation**: Visit the [Google AI documentation](https://ai.google.dev/docs)
-2. **Join the community**: Participate in forums and discussions about AI tools
-3. **Experiment**: Try different use cases and find what works best for your workflow
-4. **Stay updated**: Follow Google's announcements for new features and improvements
-
-Happy coding with Gemini CLI!
-
----
-
-*This article was written to help developers get started with Gemini CLI. For the most up-to-date information, always refer to the official Google AI documentation.*
