@@ -31,7 +31,7 @@ On the product side, I think many like me were too lazy to leave IntelliJ for a 
 
 I need to say though, comparing Cursor to gemini-cli is where I understood the importance of the 'product' side in AI. Both engines have the same level of performance and intelligence, but Cursor has already solved all the little things that can be annoying when coding with AI: applying changes, switching LLMs, tracking context length, scanning a directory… All those little frictions that show the limitations of human-agents interactions have been solved already with opinionated takes on features, which makes the experience so much smoother. That's the value in paying for Cursor.
 
-But onto gemini-cli, which is a very open-ended agent, allows you to build anything, but sometimes goes down the rabbit hole.
+But onto gemini-cli, a very open-ended agent that allows you to build anything, but sometimes goes down the rabbit hole.
 Is it something you could have built yourself easily ? Let's dig into it.
 
 # The Main Logic Flow
@@ -46,7 +46,7 @@ Here's the exact flow: Gemini responds to the user's request. If that response c
 
  This means complex tasks like "build a piece of code" can span multiple turns (each turn: Gemini decides what tools to use → tools execute → results go back to Gemini), while simple requests end as soon as Gemini has enough information to respond without needing tools. 
  
- There are safety nets - turn limits, loop detection, and user cancellation - but the core decision is left to the AI's judgment of whether it needs more tools to complete the task.
+ There are safety nets - turn limits, infinite loop detection, and user cancellation - but the core decision is left to the AI's judgment of whether it needs more tools to complete the task.
 
 # The Prompts
 
@@ -77,7 +77,7 @@ I compiled some of the most clear cut instructions below:
 
 `Execute multiple independent tool calls in parallel when feasible`
 
-It is funny to see many of the inner logic we would have hardcoded in a traditional software is here exposed to the agent as concepts it should use, but can also decide not to.
+It is funny to see many of the inner logic we would have hardcoded in a traditional software is here exposed to the agent as concepts it should use - but won't necessarily to so when the opportunity comes.
 
 * **Environment-specific instructions**: Different prompts for sandbox vs non-sandbox environments. Here a different prompt is appended depending on the user environment. Any user-related memory is added.
 
@@ -90,7 +90,7 @@ It is funny to see many of the inner logic we would have hardcoded in a traditio
 There were also some few-shot examples provided like:
 `user: list files here. → [tool_call: ls for path '/path/to/project']`
 
-Surprisingly, there were many instructions that seemed too vague to be useful for the LLM and cluttered the context like:
+Surprisingly, there were many instructions that seemed too vague to be useful for the LLM and probably cluttered the context like:
 `Think about the user's request and the relevant codebase context`
 
 ## The Compression Prompt
@@ -107,7 +107,7 @@ The prompts asks for summarizing conversation history into structured XML format
 
 Here is an extract that is quite self-explanatory: 
 
-'''
+```
 When the conversation history grows too large, you will be invoked to distill the entire history into a concise, structured XML snapshot. 
 This snapshot is CRITICAL, as it will become the agent's *only* memory of the past. 
 
@@ -117,7 +117,7 @@ Identify every piece of information that is essential for future actions.
 
 After your reasoning is complete, generate the final <state_snapshot> XML object. 
 Be incredibly dense with information. Omit any irrelevant conversational filler.
-'''
+```
 
 This compression is triggered when the conversation history approaches **70% of the model's token limit** . The exact conditions are:
 
