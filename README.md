@@ -1,5 +1,6 @@
 # ncvgl.github.io
 
-That's my blog!
+My blog is right [here](https://ncvgl.github.io)!
+
 
 
