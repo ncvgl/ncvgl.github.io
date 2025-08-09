@@ -249,7 +249,7 @@ gemini-cli comes with **11 built-in tools** that cover the essential operations 
 
 <img src="/assets/images/post_images/7.png" style="max-width: 800px; width: 100%; height: auto; border: 1px solid lightgrey; border-radius: 10px;">
 
-### File System Tools (7)
+### File System Tools
 - **`ls`** - List files and directories
 - **`read_file`** - Read a single file's contents  
 - **`read_many_files`** - Read multiple files at once
@@ -258,12 +258,12 @@ gemini-cli comes with **11 built-in tools** that cover the essential operations 
 - **`grep`** - Search for text patterns in files
 - **`glob`** - Find files using glob patterns
 
-### System Tools (3)
+### System Tools
 - **`shell`** - Execute shell commands
 - **`web_fetch`** - Make HTTP requests to web APIs
 - **`web_search`** - Search the web using Google Search
 
-### Memory Tools (1)
+### Memory Tools
 - **`save_memory`** - Save information to persistent memory (`~/.gemini/GEMINI.md`)
 
 Once the model decides to use a tool, here is how the execution works, nothing fancy:
@@ -304,24 +304,24 @@ _I added this part after a colleague, Matt, rightly pointed this article was mis
 
 Think of Gemini CLI like a neat roommate in a chaotic, warehouse-sized code loft. It doesn’t pre-index the whole warehouse; instead, it keeps a fast, opinionated map and grabs the right
 boxes only when you ask, and it packs them into Gemini’s context like a Tetris grandmaster.
-* **Multi‑root brain**: It treats your repo(s) as a set of “workspace directories,” so searches, ls, grep, glob all work across multiple roots while enforcing strict
-“stay‑inside” boundaries. It resolves real paths to avoid symlink shenanigans.
-* **Ignore stack**: Anything in the `.gitignore` and .`geminiignore` will be ignored. The CLI will also tell you how many files it refused at the door. Btw, a `.geminiignore` is a gitignore‑style project file that reminds Gemini CLI which paths to skip. One is added at the root of each workspace directory you’ve added.
-* **Git‑first searching**: It prefers git grep (fast, indexed), then system grep, then a JS glob+stream fallback. That means it returns only the lines you need, not the entire warehouse.
-* **Glob that feels fresh**: File finding is recency‑aware so recently modified stuff floats to the top.
-* **Parallel BFS**: When it must scan folders, it does it breadth‑first in parallel batches, so you see results faster in big trees. It stops when a maxDirs cap is reached and tracks visited paths to avoid loops.
-* **Smart @‑completion and @‑reading**: Typing @file or @dir/** autocompletes, respects ignore rules, and only reads what you asked, not “the entire
-frontend since 2017.” Also hides dotfiles by default.
+1. **Multi‑root brain**: It treats your repo(s) as a set of “workspace directories,” so searches, ls, grep, glob all work across multiple roots while enforcing strict
+   “stay‑inside” boundaries. It resolves real paths to avoid symlink shenanigans.
+2. **Ignore stack**: Anything in the `.gitignore` and .`geminiignore` will be ignored. The CLI will also tell you how many files it refused at the door. Btw, a `.geminiignore` is a gitignore‑style project file that reminds Gemini CLI which paths to skip. One is added at the root of each workspace directory you’ve added.
+3. **Git‑first searching**: It prefers git grep (fast, indexed), then system grep, then a JS glob+stream fallback. That means it returns only the lines you need, not the entire warehouse.
+4. **Glob that feels fresh**: File finding is recency‑aware so recently modified stuff floats to the top.
+5. **Parallel BFS**: When it must scan folders, it does it breadth‑first in parallel batches, so you see results faster in big trees. It stops when a maxDirs cap is reached and tracks visited paths to avoid loops.
+6. **Smart @‑completion and @‑reading**: Typing @file or @dir/** autocompletes, respects ignore rules, and only reads what you asked, not “the entire
+   frontend since 2017.” Also hides dotfiles by default.
 
 ## The Context
 
 Now the calorie math: Getting your code into the model without blowing the context budget.
-* **Startup diet**: It sends a compact folder tree of each workspace directory, capped at 200 items. That’s “shape of repo,” not “contents of repo.”
-* **Full‑context is opt‑in**: You can ask it to slurp more, but only if you flip a flag. Even then, heavy guardrails kick in.
-* **Per‑file portion control**: Text reads cap at 20MB, first 2,000 lines, and 2,000 characters per line—clearly marked with “[truncated]” hints. Images/PDFs are only included if
-explicitly requested by names or extension, and go as inlineData (base64 + mime), not plaintext dumps.
-* **Tool output gets summarized**: Noisy shell output can be auto‑summarized down to a token budget before it ever hits the prompt.
-* **History compresses itself**: As seen in [The Compression Prompt](#the-compression-prompt)
+1. **Startup diet**: It sends a compact folder tree of each workspace directory, capped at 200 items. That’s “shape of repo,” not “contents of repo.”
+2. **Full‑context is opt‑in**: You can ask it to slurp more, but only if you flip a flag. Even then, heavy guardrails kick in.
+3. **Per‑file portion control**: Text reads cap at 20MB, first 2,000 lines, and 2,000 characters per line—clearly marked with “[truncated]” hints. Images/PDFs are only included if
+   explicitly requested by names or extension, and go as inlineData (base64 + mime), not plaintext dumps.
+4. **Tool output gets summarized**: Noisy shell output can be auto‑summarized down to a token budget before it ever hits the prompt.
+5. **History compresses itself**: As seen in [The Compression Prompt](#the-compression-prompt)
 
 ## Practical Example
 
@@ -354,6 +354,7 @@ What Gemini CLI does under the hood:
 
 ## In Short
 
-So if we sum up we have:
+So in the end we have:
 * **Indexing tricks**: multi‑root, ignore stack, git‑first grep, recency‑glob, parallel BFS, bounds/symlink safety.
 * **Context tricks**: folder map, per‑file caps, summarization, automatic compression.
+* And a [huge mermaid diagram](/assets/mermaid/1.svg) to sum it up

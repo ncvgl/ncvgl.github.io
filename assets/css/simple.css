@@ -19,17 +19,10 @@ body {
 td,
 th,
 tr,
-p,
-a {
+p {
   font-family: 'Lato', Verdana, Helvetica, sans-serif;
   font-size: 14px;
 }
-
-strong {
-  font-family: 'Lato', Verdana, Helvetica, sans-serif;
-  font-size: 14px;
-}
-
 heading {
   font-family: 'Lato', Verdana, Helvetica, sans-serif;
   font-size: 22px;
@@ -79,6 +72,38 @@ img[alt="profile photo"] {
     font-family: 'Lato', Verdana, Helvetica, sans-serif;
     font-size: 32px;
     font-weight: 700;
+}
+
+/* Header anchor link styling */
+.article-content .content h1 .header-anchor,
+.article-content .content h2 .header-anchor,
+.article-content .content h3 .header-anchor,
+.article-content .content h4 .header-anchor,
+.article-content .content h5 .header-anchor,
+.article-content .content h6 .header-anchor {
+    visibility: hidden;
+    margin-left: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+.article-content .content h1:hover .header-anchor,
+.article-content .content h2:hover .header-anchor,
+.article-content .content h3:hover .header-anchor,
+.article-content .content h4:hover .header-anchor,
+.article-content .content h5:hover .header-anchor,
+.article-content .content h6:hover .header-anchor {
+    visibility: visible;
+}
+
+.article-content .content .header-anchor:hover {
+    color: #666;
+}
+
+/* Copy feedback */
+.article-content .content .header-anchor.copied {
+    color: #2aa198; /* teal-ish */
 }
 
 .article-content .meta {
