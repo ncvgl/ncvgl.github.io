@@ -296,7 +296,7 @@ I have this bittersweet feeling we robbed the magic out of gemini-cli!
 
 # Afterword: The Search
 
-.. Or how Gemini CLI tames giant monorepos - without melting your tokens.
+...Or how Gemini CLI tames giant monorepos - without melting your tokens.
 
 _I added this part after a colleague, Matt, rightly pointed this article was missing "the real secret sauce [...] any tricks it pulls to help index large monorepos"._
 
@@ -335,19 +335,19 @@ What Gemini CLI does under the hood:
 * [x] Stitch that content into your prompt as structured parts:
 
 ```
-    1 │ --- Content from referenced files ---
-    2 │ Content from @packages/core/src/tools/grep.ts:
-    3 │
-    4 │ [File content truncated: showing lines 1-2000 of 2345 total lines. Use offset/limit parameters to view more.]
-    5 │ export class GrepTool extends BaseTool<...> {
-    6 │   ...
-    7 │ }
-    8 │
-    9 │ Content from @packages/core/src/tools/glob.ts:
-   10 │ export class GlobTool extends BaseTool<...> {
-   11 │   ...
-   12 │ }
-   13 │ --- End of content ---
+  1 │ --- Content from referenced files ---
+  2 │ Content from @packages/core/src/tools/grep.ts:
+  3 │
+  4 │ [File content truncated: showing lines 1-2000 of 2345 total lines. Use offset/limit parameters to view more.]
+  5 │ export class GrepTool extends BaseTool<...> {
+  6 │   ...
+  7 │ }
+  8 │
+  9 │ Content from @packages/core/src/tools/glob.ts:
+ 10 │ export class GlobTool extends BaseTool<...> {
+ 11 │   ...
+ 12 │ }
+ 13 │ --- End of content ---
 ```
 
 * [x] If the combined prompt is getting chunky, tools like shell output get summarized first; if the whole chat approaches the window, the oldest chunk is compressed into a dense <state_snapshot> and the freshest 30% remains verbatim.
