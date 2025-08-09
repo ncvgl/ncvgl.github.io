@@ -22,6 +22,7 @@ _Disclaimer: I created this article from the [open-source code](https://github.c
 *   [The Tools](#the-tools)
 *   [The Telemetry](#the-telemetry)
 *   [Conclusion](#conclusion)
+*   [Afterword: The Search](#afterword-the-search)
 
 
 I was curious how gemini-cli was written, after all it worked quite well and was as close to Cursor as Google had gotten. 
@@ -286,3 +287,73 @@ For long running tools, a classic callback pattern is used. The scheduler provid
 So much code - 500 files, 100k lines - and many concepts that come together but that stay relatively simple when taken apart.
 
 I have this bittersweet feeling we robbed the magic out of gemini-cli!
+
+<br>
+
+***
+
+<br>
+
+# Afterword: The Search
+
+.. Or how Gemini CLI tames giant monorepos - without melting your tokens.
+
+_I added this part after a colleague, Matt, rightly pointed this article was missing "the real secret sauce [...] any tricks it pulls to help index large monorepos"._
+
+## The Indexing
+
+Think of Gemini CLI like a neat roommate in a chaotic, warehouse-sized code loft. It doesn’t pre-index the whole warehouse; instead, it keeps a fast, opinionated map and grabs the right
+boxes only when you ask, and it packs them into Gemini’s context like a Tetris grandmaster.
+* **Multi‑root brain**: It treats your repo(s) as a set of “workspace directories,” so searches, ls, grep, glob all work across multiple roots while enforcing strict
+“stay‑inside” boundaries. It resolves real paths to avoid symlink shenanigans.
+* **Ignore stack**: Anything in the `.gitignore` and .`geminiignore` will be ignored. The CLI will also tell you how many files it refused at the door. Btw, a `.geminiignore` is a gitignore‑style project file that reminds Gemini CLI which paths to skip. One is added at the root of each workspace directory you’ve added.
+* **Git‑first searching**: It prefers git grep (fast, indexed), then system grep, then a JS glob+stream fallback. That means it returns only the lines you need, not the entire warehouse.
+* **Glob that feels fresh**: File finding is recency‑aware so recently modified stuff floats to the top.
+* **Parallel BFS**: When it must scan folders, it does it breadth‑first in parallel batches, so you see results faster in big trees. It stops when a maxDirs cap is reached and tracks visited paths to avoid loops.
+* **Smart @‑completion and @‑reading**: Typing @file or @dir/** autocompletes, respects ignore rules, and only reads what you asked, not “the entire
+frontend since 2017.” Also hides dotfiles by default.
+
+## The Context
+
+Now the calorie math: Getting your code into the model without blowing the context budget.
+* **Startup diet**: It sends a compact folder tree of each workspace directory, capped at 200 items. That’s “shape of repo,” not “contents of repo.”
+* **Full‑context is opt‑in**: You can ask it to slurp more, but only if you flip a flag. Even then, heavy guardrails kick in.
+* **Per‑file portion control**: Text reads cap at 20MB, first 2,000 lines, and 2,000 characters per line—clearly marked with “[truncated]” hints. Images/PDFs are only included if
+explicitly requested by names or extension, and go as inlineData (base64 + mime), not plaintext dumps.
+* **Tool output gets summarized**: Noisy shell output can be auto‑summarized down to a token budget before it ever hits the prompt.
+* **History compresses itself**: As seen in [The Compression Prompt](#the-compression-prompt)
+
+## Practical Example
+
+Let’s say you type:
+
+`How does the cache work in @packages/core/src/utils/*.ts? Also check @grep.ts and @glob.ts`
+
+What Gemini CLI does under the hood:
+* [x] Parse @... parts, resolve paths/globs across all workspace dirs, and respect ignore rules. If a piece isn’t a file, it expands to a glob like dir/**.
+* [x] Read each referenced file with the limits mentioned above.
+* [x] Stitch that content into your prompt as structured parts:
+
+```
+    1 │ --- Content from referenced files ---
+    2 │ Content from @packages/core/src/tools/grep.ts:
+    3 │
+    4 │ [File content truncated: showing lines 1-2000 of 2345 total lines. Use offset/limit parameters to view more.]
+    5 │ export class GrepTool extends BaseTool<...> {
+    6 │   ...
+    7 │ }
+    8 │
+    9 │ Content from @packages/core/src/tools/glob.ts:
+   10 │ export class GlobTool extends BaseTool<...> {
+   11 │   ...
+   12 │ }
+   13 │ --- End of content ---
+```
+
+* [x] If the combined prompt is getting chunky, tools like shell output get summarized first; if the whole chat approaches the window, the oldest chunk is compressed into a dense <state_snapshot> and the freshest 30% remains verbatim.
+
+## In Short
+
+So if we sum up we have:
+* **Indexing tricks**: multi‑root, ignore stack, git‑first grep, recency‑glob, parallel BFS, bounds/symlink safety.
+* **Context tricks**: folder map, per‑file caps, summarization, automatic compression.
