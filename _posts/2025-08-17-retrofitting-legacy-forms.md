@@ -7,9 +7,12 @@ description: "Because governments still love their PDFs"
 image: "/assets/images/fill-my-paperwork.png"
 ---
 
-<img src="/assets/images/fill-my-paperwork.png" alt="Legacy Forms" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 20px 0;">
+<img src="/assets/images/fill-my-paperwork.png" alt="Legacy Forms" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 20px auto;">
 
-So the other day, I had to fill another government form by paper. Take a photo. Send it back. The usual.
+The webapp is [here](https://fill-my-papers-424605661533.europe-west9.run.app/). <br>
+The code is [here](https://github.com/ncvgl/fill-my-paperwork).
+
+... So the other day, I had to fill another government form by paper. Take a photo. Send it back. The usual.
 
 Let's say I'd had enough of this workflow. Government sends you a PDF, you print it, fill it by hand, scan it, email it back. Or you try some digital tools you have to pay for.
 
@@ -25,7 +28,6 @@ Every time I use this, I'm reminded that good UX isn't about flashy animations o
 
 Government forms are the perfect example of that gap. They want your information. You want to give it to them. But somehow we've created this elaborate ritual involving printers, scanners, and PDF readers from 2003.
 
-Sometimes the best innovation is just... making things work. The service is free, no login, no storage, open-source.
+Sometimes the best innovation is just... making things work. 
 
-The website is [here](https://fill-my-papers-424605661533.europe-west9.run.app/).
-The code is [here](https://github.com/ncvgl/fill-my-paperwork).
+The service is free, no login, no storage, open-source.
