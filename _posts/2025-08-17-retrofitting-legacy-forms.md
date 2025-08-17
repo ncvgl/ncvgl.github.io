@@ -31,3 +31,9 @@ Government forms are the perfect example of that gap. They want your information
 Sometimes the best innovation is just... making things work. 
 
 The service is free, no login, no storage, open-source.
+
+<br>
+<br>
+
+<img src="/assets/images/demo-fill-paperwork.png" alt="Legacy Forms" style="max-width: 800px; width: 100%; height: auto; display: block; margin: 20px auto;">
+
