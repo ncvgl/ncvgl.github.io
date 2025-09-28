@@ -60,9 +60,15 @@ title: Nathan Cavaglione
                 {% endif %}
               </td>
               <td style="padding:20px;width:75%;vertical-align:middle">
+                {% if post.external_url %}
+                <a href="{{ post.external_url }}" target="_blank">
+                  <papertitle>{{ post.title }}</papertitle>
+                </a>
+                {% else %}
                 <a href="{{ post.url }}">
                   <papertitle>{{ post.title }}</papertitle>
                 </a>
+                {% endif %}
                 <br><em>{{ post.date | date: "%B %Y" }}</em>
                 <p></p>
                 <p>{{ post.description }}</p>
