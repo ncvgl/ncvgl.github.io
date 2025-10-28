@@ -25,13 +25,11 @@ I got a little addicted to turning my favorite mangas into animated versions usi
 
 ## The Reality Check
 
-After spending a day working with Veo 3.1 to turn half a chapter into an animated version, I had to walk back on my initial excitement: **we're still not there yet** on manga-to-anime generation.
+After spending a day working with Veo 3.1 to turn half a chapter into an animated version, I had to walk back on my initial excitement: **we're still not there yet** on full automatic manga-to-anime generation.
 
-Video and image models are mind-blowing, but turning static manga into moving anime is a different beast. The main limitation is that the model has to invent too much. It can't take a reference for how the anime should look, so it fills in the blanks and drifts too far from the intended style. The results are good enough for fan-made action, but nowhere near studio quality.
+Video and image models are mind-blowing, but turning static manga into moving anime is a different beast. The main limitation is that the model has to invent too much. It can't take a style reference for how the anime should look yet, so it fills in the blanks and drifts too far from the intended style. The results are good enough for fan-made action, but not studio quality.
 
 Another limitation is keeping voice and character consistency across scenes, with currently no feature for those except prompting.
-
-Ironically, the reverse (anime to manga) would be easier since it's more about stripping away details than adding.
 
 ## The Recipe
 
