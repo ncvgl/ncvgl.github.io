@@ -53,7 +53,9 @@ title: Nathan Cavaglione
           <tbody>
             <tr>
               <td style="padding:20px;width:25%;vertical-align:middle">
-                {% if post.image %}
+                {% if post.thumbnail %}
+                  <img src="{{ post.thumbnail }}" width="160px" alt="{{ post.title }}">
+                {% elsif post.image %}
                   <img src="{{ post.image }}" width="160px" alt="{{ post.title }}">
                 {% else %}
                   <img src="https://via.placeholder.com/160x160/4A90E2/FFFFFF?text={{ post.title | slice: 0, 3 | upcase }}" width="160px" alt="{{ post.title }}">

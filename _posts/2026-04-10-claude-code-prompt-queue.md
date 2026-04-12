@@ -1,7 +1,7 @@
 ---
 layout: simple-post
 title: "A Prompt Queue for Claude Code"
-date: 2026-04-12
+date: 2026-04-10
 author: Nathan Cavaglione
 description: "30 lines of bash so you can walk away"
 image: "/assets/images/prompt-queue.jpeg"
