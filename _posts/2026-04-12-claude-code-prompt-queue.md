@@ -36,4 +36,4 @@ Install with:
 /plugin install prompt-queue@prompt-queue-marketplace
 ```
 
-PS: Claude has a CreateTask tool but it can stop in the middle of a task asking a question that you are not there to answer. This plugin forces Claude to continue.
+**FAQ**: Yes, Claude has an implicit CreateTask tool but it can stop in the middle of a task asking a question that you are not there to answer. This plugin forces Claude to continue.
