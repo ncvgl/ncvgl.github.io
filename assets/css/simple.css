@@ -52,15 +52,21 @@ img[alt="profile photo"] {
    Mobile: single column ordered name → photo → text. */
 .hero {
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 1.575fr 1fr; /* matches original 63%/40% table ratio */
   grid-template-areas:
     "name  photo"
     "text  photo";
-  column-gap: 2rem;
-  row-gap: 0.5rem;
+  column-gap: 0;
+  row-gap: 0;
   align-items: start;
-  padding: 2.5%;
+  padding: 0;
 }
+
+.hero-name,
+.hero-text { padding: 2.5%; padding-top: 0; padding-bottom: 0; }
+.hero-name { padding-top: 2.5%; }
+.hero-text { padding-bottom: 2.5%; }
+.hero-photo { padding: 2.5%; }
 
 .hero-name  { grid-area: name; text-align: center; }
 .hero-photo { grid-area: photo; align-self: center; }
