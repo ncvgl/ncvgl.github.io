@@ -9,6 +9,8 @@ image: "/assets/images/caveman-mosaic-thumb.png"
 
 <img src="/assets/images/caveman-mosaic.png" alt="Mosaic of 731 SWE-bench Pro Public instances ordered by difficulty. Each cell is split horizontally — top half = baseline, bottom half = caveman. Green = resolved, red = failed, gray = not tested. Our 101-instance frontier band appears as a colored stripe across the gray." style="max-width: 600px; width: 100%; height: auto; display: block; margin: 20px auto;">
 
+**Repo with all data, patches, and session transcripts:** [github.com/ncvgl/does-caveman-kill-claude](https://github.com/ncvgl/does-caveman-kill-claude)
+
 40,000 people starred the [caveman prompt](https://github.com/JuliusBrussee/caveman). It promises **65% token savings** by making LLMs talk like cavemen — *"why use many token when few token do trick."* Catchy, viral, fun.
 
 So I tested it.
@@ -78,32 +80,26 @@ This isn't unique to caveman — it's a general pattern when you tell a model to
 
 Here's the surprise nobody asked for. Of the 79 instances where both conditions resolved, only **3 produced byte-identical patches**. The other 76 reached different valid solutions:
 
-- Same target files in 61% of cases (median file-Jaccard = 1.0)
-- But the actual changed lines are mostly different — median line-Jaccard 0.35
-- 43% of pairs had less than 30% line overlap
+- 61% of pairs touched the **exact same set of files**.
+- But the actual lines they changed are mostly different — typically only ~35% of changed lines appear in both patches.
+- In 43% of pairs, less than 30% of the changed lines overlap — essentially different implementations of the same fix.
 
 In other words: the two configurations agreed on *where* the bug was, but wrote substantively different code to fix it. Caveman isn't just writing a terser version of the baseline patch — the model takes a visibly different path and lands on a different valid fix.
 
 This is partly a property of SWE-bench Pro (its grader admits many valid implementations per task), but it's also a reminder: a prompt-style change isn't surface-level. It rewires the trajectory.
 
-## The variance argument
-
-If you're a single user, the mean is what you experience. If you're running an agent loop at scale, the *tail* is what kills you.
-
-Caveman's per-instance variance is large — savings range from −102% (doubled) to +71% (saved two-thirds). A worst-case 2× run busts your budget assumptions in production. Mean savings of 14% with that much variance is a different operational story than 14% with tight variance.
-
 ## So should you use it?
 
-**At scale — automated agentic systems running thousands of jobs a day — turn it on.** 12% lower cost is millions of dollars at any non-trivial volume. The variance hurts but doesn't dominate the average. The quality risk is real but small (3pp non-significant gap on our data).
+**At scale — automated agentic systems running thousands of jobs a day — turn it on.** 12% lower cost is millions of dollars at any non-trivial volume. The quality risk is real but small (a 3-point resolve-rate gap that isn't statistically significant on our data).
 
-**As a single user — I wouldn't bother.** You trade a layer of visibility into the model's reasoning (the prose is where you see *why* the model is doing what it's doing) for savings that don't move the needle on a personal API bill. And you absorb the worst-case variance one run at a time, which is more annoying than the average suggests.
+**As a single user — I wouldn't bother.** You trade a layer of visibility into the model's reasoning (the prose is where you see *why* the model is doing what it's doing) for savings that don't move the needle on a personal API bill.
 
 ## Caveats
 
 - Single model (Haiku 4.5). Larger models with more reasoning capacity might respond differently to the compression instruction.
 - Single harness (Claude Code in headless mode). Other agent frameworks may show different ratios of prose to tool-args.
 - The caveman system prompt itself adds ~69 lines of instructions and examples to caveman's input — so this is "caveman as deployed," not "output compression in pure isolation."
-- n=92 means we can rule out a >7pp resolve-rate regression with 95% confidence; we cannot rule out a 3pp regression at this sample size.
+- n=92 means we can rule out a resolve-rate regression bigger than ~7 percentage points with 95% confidence; we cannot rule out a small ~3-point regression at this sample size.
 
 ## The real lesson
 
@@ -111,7 +107,3 @@ Tested in chat ≠ works in agent. When the bulk of your model's output is struc
 
 Caveman works. It was just oversold by the hype, for coding at least.
 
----
-
-**Full data, every patch, every session transcript, reproducible at**
-[github.com/ncvgl/does-caveman-kill-claude](https://github.com/ncvgl/does-caveman-kill-claude)
