@@ -90,7 +90,7 @@ This is partly a property of SWE-bench Pro (its grader admits many valid impleme
 
 ## So should you use it?
 
-**At scale — automated agentic systems running thousands of jobs a day — turn it on.** 12% lower cost is millions of dollars at any non-trivial volume. The quality risk is real but small (a 3-point resolve-rate gap that isn't statistically significant on our data).
+**At scale — automated agentic systems running thousands of jobs a day — turn it on.** 12% lower cost is millions of dollars at any non-trivial volume. The quality risk is real but small (a ~3% resolve-rate gap that isn't statistically significant on our data).
 
 **As a single user — I wouldn't bother.** You trade a layer of visibility into the model's reasoning (the prose is where you see *why* the model is doing what it's doing) for savings that don't move the needle on a personal API bill.
 
@@ -99,7 +99,7 @@ This is partly a property of SWE-bench Pro (its grader admits many valid impleme
 - Single model (Haiku 4.5). Larger models with more reasoning capacity might respond differently to the compression instruction.
 - Single harness (Claude Code in headless mode). Other agent frameworks may show different ratios of prose to tool-args.
 - The caveman system prompt itself adds ~69 lines of instructions and examples to caveman's input — so this is "caveman as deployed," not "output compression in pure isolation."
-- n=92 means we can rule out a resolve-rate regression bigger than ~7 percentage points with 95% confidence; we cannot rule out a small ~3-point regression at this sample size.
+- n=92 means we can rule out a resolve-rate drop bigger than ~7% with 95% confidence; we cannot rule out a small ~3% drop at this sample size.
 
 ## The real lesson
 
