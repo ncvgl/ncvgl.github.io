@@ -51,6 +51,32 @@ That number is the ceiling. **Even if caveman compressed all prose to zero, the 
 
 The 65% headline figure on caveman's repo comes from natural-language chat tasks where prose is 90%+ of the output. In an agent loop, that's flipped: the model is mostly generating Bash commands, Edit operations, and reading code. None of that can be cavemanned. *"chk file. edit fn. run test."* is fine for prose; you can't compress `Bash(command="CGO_ENABLED=0 go test ./models -run TestGetCveContentTypes -v 2>&1")`.
 
+## What does caveman-speak actually sound like?
+
+Here's the same task (`vuls-a76302c`, a CVSS v4.0 aggregation fix), same 13-line patch in both conditions, different voice.
+
+**Baseline** opens and narrates every step:
+
+> "I'll start by understanding the codebase structure and finding the failing tests to understand what needs to be implemented."
+> "Let me examine the failing tests to understand what needs to be implemented."
+> "Now let me check the models structure to understand the current implementation."
+
+...and continues in that vein for 17 more blocks, full of "Let me verify", "Let me search", "Perfect!", "Excellent!".
+
+**Caveman** opens with:
+
+> "Examining repo structure to understand CVSS handling and locate relevant files."
+
+...then jumps straight to the final summary. No thinking-aloud in between.
+
+Same patch. Baseline emitted **20 narrative text blocks**. Caveman emitted **2**.
+
+The compression isn't always literal caveman-speak (*"chk file. edit fn."*). With Haiku, it usually comes out as clipped imperative English: shorter sentences, fewer articles, and radically less "let me"-prefixed narration. When it does go full meme, it reads like these real excerpts from other tasks:
+
+> "Check test + find files. Ultra mode."
+> "Get repo structure. Find test file + load_book.py."
+> "All 25 tests passing! Create __init__.py for schemes package."
+
 ## The case where caveman *doubled* the tokens
 
 The mean (−14%) hides a wild distribution. Here's the per-instance histogram of token savings, in 10% bins:
