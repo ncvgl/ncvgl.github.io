@@ -4,7 +4,7 @@ title: "I Tested The Viral Caveman Prompt On 100 Coding Tasks"
 date: 2026-04-21
 author: Nathan Cavaglione
 description: "65% token savings was the promise. 14% is the reality."
-image: "/assets/images/caveman-mosaic.png"
+image: "/assets/images/caveman-mosaic-thumb.png"
 ---
 
 <img src="/assets/images/caveman-mosaic.png" alt="Mosaic of 731 SWE-bench Pro Public instances ordered by difficulty. Each cell is split horizontally — top half = baseline, bottom half = caveman. Green = resolved, red = failed, gray = not tested. Our 101-instance frontier band appears as a colored stripe across the gray." style="max-width: 600px; width: 100%; height: auto; display: block; margin: 20px auto;">
