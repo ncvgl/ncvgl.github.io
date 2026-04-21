@@ -47,6 +47,25 @@ img[alt="profile photo"] {
   max-width: 100%;
 }
 
+/* Home hero: name + photo + intro text.
+   Desktop: photo on the right, name + text stacked on the left.
+   Mobile: single column ordered name → photo → text. */
+.hero {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-areas:
+    "name  photo"
+    "text  photo";
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+  align-items: start;
+  padding: 2.5%;
+}
+
+.hero-name  { grid-area: name; text-align: center; }
+.hero-photo { grid-area: photo; align-self: center; }
+.hero-text  { grid-area: text; }
+
 /* Article page */
 .article-container {
     max-width: 700px;
@@ -215,4 +234,20 @@ h3 {
         width: 120px;
         height: 120px;
     }
-} 
+
+    /* Stack hero in single column: name → photo → text */
+    .hero {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "name"
+            "photo"
+            "text";
+        column-gap: 0;
+        row-gap: 1rem;
+    }
+
+    .hero-photo {
+        max-width: 220px;
+        margin: 0 auto;
+    }
+}
