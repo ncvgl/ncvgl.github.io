@@ -43,8 +43,10 @@ name {
 img[alt="profile photo"] {
   border-radius: 50% !important;
   object-fit: cover;
-  width: 100%;
+  width: 70%;
   max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 
 /* Home hero: name + photo + intro text.
