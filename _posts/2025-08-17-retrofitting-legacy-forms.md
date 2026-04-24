@@ -5,6 +5,7 @@ date: 2025-08-17
 author: Nathan Cavaglione
 description: "Because governments still love their PDFs"
 image: "/assets/images/fill-my-paperwork.png"
+thumbnail: "/assets/images/fill-my-paperwork-thumb.png"
 ---
 
 <img src="/assets/images/fill-my-paperwork.png" alt="Legacy Forms" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 20px auto;">
